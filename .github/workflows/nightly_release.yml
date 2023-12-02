@@ -1,0 +1,46 @@
+name: nightly_release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  nightly_release:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: make binaries
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: binaries
+          path: binaries
+
+      - name: Create Nightly Release
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs').promises;
+            const { repo: { owner, repo } } = context;
+            
+            const currentRelease = `nightly-${new Date().toISOString().slice(0, 10)}`;
+            
+            const res = await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: currentRelease,
+              name: currentRelease,
+            });
+            const release_id = res.data.id;
+            
+            for (const name of await fs.readdir('./binaries/')) {
+              await github.rest.repos.uploadReleaseAsset({
+                owner,
+                repo,
+                release_id,
+                name,
+                data: await fs.readFile(`./binaries/${name}`),
+              });
+            }

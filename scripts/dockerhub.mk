@@ -1,4 +1,4 @@
-DOCKER_REPOSITORY = bluenviron/mediaserver
+DOCKER_REPOSITORY = devsolux/mediaserver
 
 define DOCKERFILE_DOCKERHUB
 FROM scratch

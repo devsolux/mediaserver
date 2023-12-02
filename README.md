@@ -143,17 +143,17 @@ There are several installation methods available: standalone binary, Docker imag
 Download and launch the image:
 
 ```
-docker run --rm -it --network=host bluenviron/mediaserver:latest
+docker run --rm -it --network=host devsolux/mediaserver:latest
 ```
 
 Available images:
 
 | name                                     | FFmpeg included    | RPI Camera support |
 |------------------------------------------|--------------------|--------------------|
-| bluenviron/mediaserver:latest            | :x:                | :x:                |
-| bluenviron/mediaserver:latest-ffmpeg     | :heavy_check_mark: | :x:                |
-| bluenviron/mediaserver:latest-rpi        | :x:                | :heavy_check_mark: |
-| bluenviron/mediaserver:latest-ffmpeg-rpi | :heavy_check_mark: | :heavy_check_mark: |
+| devsolux/mediaserver:latest            | :x:                | :x:                |
+| devsolux/mediaserver:latest-ffmpeg     | :heavy_check_mark: | :x:                |
+| devsolux/mediaserver:latest-rpi        | :x:                | :heavy_check_mark: |
+| devsolux/mediaserver:latest-ffmpeg-rpi | :heavy_check_mark: | :heavy_check_mark: |
 
 The `--network=host` flag is mandatory since Docker can change the source port of UDP packets for routing reasons, and this doesn't allow
 the RTSP server to identify the senders of the packets. This issue can be avoided by disabling the UDP transport protocol:
@@ -168,7 +168,7 @@ docker run --rm -it \
 -p 8889:8889 \
 -p 8890:8890/udp \
 -p 8189:8189/udp \
-bluenviron/mediaserver
+devsolux/mediaserver
 ```
 
 set `MTX_WEBRTCADDITIONALHOSTS` to your local IP address.
@@ -200,7 +200,7 @@ makepkg -si
 
    ```sh
    mkdir package/mediaserver
-   wget -O package/mediaserver/Makefile https://raw.githubusercontent.com/bluenviron/mediaserver/main/openwrt.mk
+   wget -O package/mediaserver/Makefile https://raw.githubusercontent.com/devsolux/mediaserver/main/openwrt.mk
    sed -i "s/v0.0.0/$(git ls-remote --tags --sort=v:refname https://github.com/devsolux/mediaserver | tail -n1 | sed 's/.*\///; s/\^{}//')/" package/mediaserver/Makefile
    ```
 
@@ -508,7 +508,7 @@ docker run --rm -it \
 --tmpfs /dev/shm:exec \
 -v /run/udev:/run/udev:ro \
 -e MTX_PATHS_CAM_SOURCE=rpiCamera \
-bluenviron/mediaserver:latest-rpi
+devsolux/mediaserver:latest-rpi
 ```
 
 Be aware that the Docker image is not compatible with cameras that requires a custom `libcamera` (like some ArduCam products), since it
@@ -1059,7 +1059,7 @@ There are 3 ways to change the configuration:
     * available in the root folder of the Docker image (`/mediaserver.yml`); it can be overridden in this way:
 
       ```
-      docker run --rm -it --network=host -v $PWD/mediaserver.yml:/mediaserver.yml bluenviron/mediaserver
+      docker run --rm -it --network=host -v $PWD/mediaserver.yml:/mediaserver.yml devsolux/mediaserver
       ```
 
    The configuration can be changed dynamically when the server is running (hot reloading) by writing to the configuration file. Changes are
@@ -1088,7 +1088,7 @@ There are 3 ways to change the configuration:
    the `-e` flag:
 
    ```
-   docker run --rm -it --network=host -e MTX_PATHS_TEST_SOURCE=rtsp://myurl bluenviron/mediaserver
+   docker run --rm -it --network=host -e MTX_PATHS_TEST_SOURCE=rtsp://myurl devsolux/mediaserver
    ```
 
 3. By using the [API](#api).
@@ -1698,7 +1698,7 @@ If you're using Docker, this can be achieved with the flag:
 docker run --rm -it \
 -p 8189:8189/udp
 ....
-bluenviron/mediaserver
+devsolux/mediaserver
 ```
 
 If you still have problems, maybe the UDP protocol is blocked by a firewall. Enable the local TCP listener:
